@@ -26,13 +26,17 @@
 #
 # Copyright 2014 Your name here, unless otherwise noted.
 #
-class resolvconf {
-  file {'/etc/resolvconf.conf':
+class resolvconf (
+  $conf_file      = $::resolvconf::params::conf_file,
+  $conf_file_tmpl = $::resolvconf::params::conf_file,
+  $resolvconf_bin = $::resolvconf::params::resolvconf_bin,
+) inherits resolvconf::parmas {
+  file {$conf_file:
     ensure  => present,
-    content => template('resolvconf/etc/resolvconf.conf.erb'),
+    content => template($conf_file_tmpl),
   }
-  exec { '/sbin/resolvconf -u':
+  exec { "${resolvconf_bin} -u":
     refreshonly => true,
-    subscribe   => File['/etc/resolvconf.conf'],
+    subscribe   => File[$conf_file],
   }
 }
