@@ -1,0 +1,14 @@
+{
+  "name": "icann-resolvconf",
+  "version": "0.1.0",
+  "author": "icann",
+  "summary": "module to manage resolvconf",
+  "license": "Apache 2.0",
+  "source": "https://github.com/icann-dns/puppet-resolvconf",
+  "project_page": "https://github.com/icann-dns/puppet-resolvconf",
+  "issues_url": "https://github.com/icann-dns/puppet-resolvconf/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+
