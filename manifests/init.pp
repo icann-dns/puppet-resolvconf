@@ -30,7 +30,7 @@ class resolvconf (
   $conf_file      = $::resolvconf::params::conf_file,
   $conf_file_tmpl = $::resolvconf::params::conf_file,
   $resolvconf_bin = $::resolvconf::params::resolvconf_bin,
-) inherits resolvconf::parmas {
+) inherits resolvconf::params {
   validate_absolute_path($conf_file)
   validate_string($conf_file_tmpl)
   validate_absolute_path($resolvconf_bin)
