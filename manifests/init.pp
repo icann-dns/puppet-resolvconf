@@ -11,11 +11,6 @@
 # === Examples
 #
 #  class { network:
-#      interfaces = hash of interfaces
-#      service4 = Service address used for dummy interfaces
-#      service6 = Service address used for dummy interfaces
-#      beacon4 = Service address used for dummy interfaces
-#      beacon6 = Service address used for dummy interfaces
 #  }
 #
 # === Authors
@@ -29,14 +24,26 @@
 class resolvconf (
   $conf_file      = $::resolvconf::params::conf_file,
   $resolvconf_bin = $::resolvconf::params::resolvconf_bin,
+  $nameservers    = $::resolvconf::params::nameservers
 ) inherits resolvconf::params {
   validate_absolute_path($conf_file)
   validate_absolute_path($resolvconf_bin)
+  validate_array($nameservers)
+
   concat {$conf_file: }
   concat::fragment{'/etc/resolvconf.conf.head':
     target  => $conf_file,
     order   => '01',
     content => '# Managed by puppet',
+  }
+  concat::fragment{'/etc/resolvconf.conf.nameserver-begin':
+    order   => '10',
+    content => 'name_servers="',
+  }
+  resolvconf::nameserver{ $nameservers: }
+  concat::fragment{'/etc/resolvconf.conf.nameserver-end':
+    order   => '19',
+    content => '"\n',
   }
   exec { "${resolvconf_bin} -u":
     refreshonly => true,
