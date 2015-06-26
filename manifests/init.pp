@@ -37,11 +37,13 @@ class resolvconf (
     content => '# Managed by puppet',
   }
   concat::fragment{'/etc/resolvconf.conf.nameserver-begin':
+    target  => $conf_file,
     order   => '10',
     content => 'name_servers="',
   }
   resolvconf::nameserver{ $nameservers: }
   concat::fragment{'/etc/resolvconf.conf.nameserver-end':
+    target  => $conf_file,
     order   => '19',
     content => '"\n',
   }
