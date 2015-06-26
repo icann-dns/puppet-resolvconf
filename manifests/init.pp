@@ -47,12 +47,12 @@ class resolvconf (
   if $search_domains_append {
     validate_array($search_domains_append)
   }
-  if $nameservers {
-    validate_array($nameservers)
-    resolvconf::nameservers::nameserver { $name_servers: }
+  if $name_servers {
+    validate_array($name_servers)
+    resolvconf::name_servers::name_server { $name_servers: }
   }
-  if $nameservers_append {
-    validate_array($nameservers_append)
+  if $name_servers_append {
+    validate_array($name_servers_append)
   }
   if $private_interfaces {
     validate_array($private_interfaces)
@@ -64,7 +64,7 @@ class resolvconf (
     order   => '01',
     content => "# Managed by puppet\n",
   }
-  include resolvconf::nameservers
+  include resolvconf::name_servers
   exec { "${resolvconf_bin} -u":
     refreshonly => true,
     subscribe   => Concat[$conf_file],
