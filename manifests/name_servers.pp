@@ -1,7 +1,7 @@
 #
 #
 class resolvconf::name_servers (
-  $base_order = '10',
+  $base_order = '50',
   $conf_file  = $::resolvconf::conf_file
 ){
   $order_end = $base_order + 9

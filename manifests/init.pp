@@ -25,8 +25,8 @@ class resolvconf (
   $conf_file             = $::resolvconf::params::conf_file,
   $resolvconf_bin        = $::resolvconf::params::resolvconf_bin,
   $state_dir             = $::resolvconf::params::state_dir,
-  $interface_orders      = $::resolvconf::params::interface_orders,
-  $dynamic_orders        = $::resolvconf::params::dynamic_orders,
+  $interface_order       = $::resolvconf::params::interface_order,
+  $dynamic_order         = $::resolvconf::params::dynamic_order,
   $search_domains        = $::resolvconf::params::search_domains,
   $search_domains_append = $::resolvconf::params::search_domains_append,
   $name_servers          = $::resolvconf::params::name_servers,
@@ -35,11 +35,27 @@ class resolvconf (
 ) inherits resolvconf::params {
   validate_absolute_path($conf_file)
   validate_absolute_path($resolvconf_bin)
-  if $interface_orders {
-    validate_array($interface_orders)
+  concat {$conf_file: }
+  concat::fragment{'/etc/resolvconf.conf.head':
+    target  => $conf_file,
+    order   => '01',
+    content => "# Managed by puppet\n",
   }
-  if $dynamic_orders {
-    validate_array($dynamic_orders)
+  if $interface_order {
+    validate_string($interface_order)
+    concat::fragment{'/etc/resolvconf.conf-interface_order':
+      target  => $conf_file,
+      order   => '02',
+      content => "interface_order=\"${interface_order}\"",
+    }
+  }
+  if $dynamic_order {
+    validate_string($dynamic_order)
+    concat::fragment{'/etc/resolvconf.conf-dynamic_order':
+      target  => $conf_file,
+      order   => '03',
+      content => "dynamic_order=\"${dynamic_order}\"",
+    }
   }
   if $search_domains {
     validate_array($search_domains)
@@ -58,12 +74,6 @@ class resolvconf (
     validate_array($private_interfaces)
   }
 
-  concat {$conf_file: }
-  concat::fragment{'/etc/resolvconf.conf.head':
-    target  => $conf_file,
-    order   => '01',
-    content => "# Managed by puppet\n",
-  }
   include resolvconf::name_servers
   exec { "${resolvconf_bin} -u":
     refreshonly => true,
