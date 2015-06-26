@@ -34,7 +34,7 @@ class resolvconf (
   concat::fragment{'/etc/resolvconf.conf.head':
     target  => $conf_file,
     order   => '01',
-    content => '# Managed by puppet',
+    content => "# Managed by puppet\n",
   }
   concat::fragment{'/etc/resolvconf.conf.nameserver-begin':
     target  => $conf_file,
@@ -45,7 +45,7 @@ class resolvconf (
   concat::fragment{'/etc/resolvconf.conf.nameserver-end':
     target  => $conf_file,
     order   => '19',
-    content => '"\n',
+    content => "\"\n",
   }
   exec { "${resolvconf_bin} -u":
     refreshonly => true,
