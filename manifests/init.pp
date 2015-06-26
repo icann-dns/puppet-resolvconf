@@ -46,7 +46,7 @@ class resolvconf (
     concat::fragment{'/etc/resolvconf.conf-interface_order':
       target  => $conf_file,
       order   => '02',
-      content => "interface_order=\"${interface_order}\"",
+      content => "interface_order=\"${interface_order}\"\n",
     }
   }
   if $dynamic_order {
@@ -54,27 +54,35 @@ class resolvconf (
     concat::fragment{'/etc/resolvconf.conf-dynamic_order':
       target  => $conf_file,
       order   => '03',
-      content => "dynamic_order=\"${dynamic_order}\"",
+      content => "dynamic_order=\"${dynamic_order}\"\n",
     }
   }
+  include resolvconf::search_domains
   if $search_domains {
     validate_array($search_domains)
+    resolvconf::search_domains::search_domain { $search_domains: }
   }
+  include resolvconf::search_domains_append
   if $search_domains_append {
     validate_array($search_domains_append)
+    resolvconf::search_domains_append::search_domain { $search_domains_append: }
   }
+  include resolvconf::name_servers
   if $name_servers {
     validate_array($name_servers)
     resolvconf::name_servers::name_server { $name_servers: }
   }
+  include resolvconf::name_servers_append
   if $name_servers_append {
     validate_array($name_servers_append)
+    resolvconf::name_servers_append::name_server { $name_servers_append: }
   }
+  include resolvconf::private_interfaces
   if $private_interfaces {
     validate_array($private_interfaces)
+    resolvconf::private_interfaces::private_interface { $private_interfaces: }
   }
 
-  include resolvconf::name_servers
   exec { "${resolvconf_bin} -u":
     refreshonly => true,
     subscribe   => Concat[$conf_file],
